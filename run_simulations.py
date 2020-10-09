@@ -5,18 +5,19 @@ import timeit
 
 def run_simulation(args):
     eps = -1 if args.no_privacy else args.epsilon
+    n, k, p, r = args.nodes, args.blocks, args.p, args.r
 
-    A = spectral.generate_symmetric_sbm(args.nodes, args.blocks, args.p, args.r)
+    A = spectral.generate_symmetric_sbm(n, k, p, r)
     
     start = timeit.default_timer()
     
     if not args.no_privacy:
         A = spectral.perturb_symmetric(A, eps)
     
-    labels = spectral.recover_labels(A, args.k)
+    labels = spectral.recover_labels(A, k)
     end = timeit.default_timer()
     
-    true_lengths = [args.n / args.k] * args.k # eek
+    true_lengths = [n // k] * k # eek, this is awful
     accuracy = spectral.label_accuracy(labels, true_lengths)
     
     print(f"{args.nodes}\t{args.k}\t{args.p}\t{args.r}\t{eps}\t{accuracy}\t{end-start}\n")
