@@ -48,7 +48,7 @@ def generate_symmetric_sbm(n, k, p, r):
         [ p + r if i == j else r for i in range(k) ]
         for j in range(k)
     ]
-    block_sizes = [ n/k ] * k
+    block_sizes = [ n // k ] * k
     
     return generate_sbm(block_sizes, block_probs)
     
