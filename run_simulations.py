@@ -20,7 +20,7 @@ def run_simulation(args):
     true_lengths = [n // k] * k # eek, this is awful
     accuracy = spectral.label_accuracy(labels, true_lengths)
     
-    print(f"{args.nodes}\t{args.k}\t{args.p}\t{args.r}\t{eps}\t{accuracy}\t{end-start}\n")
+    print(f"{n}\t{k}\t{p}\t{r}\t{eps}\t{accuracy}\t{end - start}\n")
 
 
 parser = argparse.ArgumentParser(description="Run simulations for (private) spectral clustering")
