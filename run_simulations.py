@@ -1,11 +1,17 @@
 import argparse
 import datetime
 import multiprocessing
-import spectral
 import timeit
+
+import numpy as np
+
+import spectral
 
 
 def run_simulation(args):
+    # generate random seed explicitly each time
+    np.random.seed()
+    
     n, k, p, r, eps = args.nodes, args.blocks, args.p, args.r, args.epsilon
 
     A = spectral.generate_symmetric_sbm(n, k, p, r)
