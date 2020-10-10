@@ -1,4 +1,5 @@
 import argparse
+import multiprocessing
 import spectral
 import timeit
 
@@ -20,7 +21,10 @@ def run_simulation(args):
     true_lengths = [n // k] * k # eek, this is awful
     accuracy = spectral.label_accuracy(labels, true_lengths)
     
-    print(f"{n}\t{k}\t{p}\t{r}\t{eps}\t{accuracy}\t{end - start}\n")
+    return [n, k, p, r, eps, accuracy, end-start]
+
+def print_result(result):
+    print("\t".join(result) + "\n")
 
 
 parser = argparse.ArgumentParser(description="Run simulations for (private) spectral clustering")
@@ -34,6 +38,10 @@ parser.add_argument("--epsilon", type=float, help="Privacy budget (>0)")
 
 args = parser.parse_args()
 
-for run in range(args.runs):
-    run_simulation(args)
+pool = multiprocessing.Pool() # use default CPU count
 
+for run in range(args.runs):
+    pool.apply_async(run_simulation, (args,), callback=print_result)
+
+pool.close()
+pool.join()
