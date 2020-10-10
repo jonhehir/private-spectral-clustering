@@ -24,7 +24,7 @@ def run_simulation(args):
     return [n, k, p, r, eps, accuracy, end-start]
 
 def print_result(result):
-    print("\t".join(result) + "\n")
+    print("\t".join([str(x) for x in result]) + "\n")
 
 
 parser = argparse.ArgumentParser(description="Run simulations for (private) spectral clustering")
@@ -38,10 +38,9 @@ parser.add_argument("--epsilon", type=float, help="Privacy budget (>0)")
 
 args = parser.parse_args()
 
-pool = multiprocessing.Pool() # use default CPU count
+with multiprocessing.Pool() as pool:
+    for run in range(args.runs):
+        pool.apply_async(run_simulation, (args,), callback=print_result)
 
-for run in range(args.runs):
-    pool.apply_async(run_simulation, (args,), callback=print_result)
-
-pool.close()
-pool.join()
+    pool.close()
+    pool.join()
