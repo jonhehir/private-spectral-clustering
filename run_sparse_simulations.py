@@ -9,7 +9,7 @@ import spectral
 
 
 def sparsify(p, n):
-    return p * n**(-.4)
+    return p * n**(-.25)
 
 def run_simulation(args):
     # generate random seed explicitly each time
