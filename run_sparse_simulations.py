@@ -9,7 +9,7 @@ import spectral
 
 
 def sparsify(p, n):
-    return p * n**(-.25)
+    return p * n**(-.3)
 
 def run_simulation(args):
     # generate random seed explicitly each time
@@ -18,7 +18,7 @@ def run_simulation(args):
     n, eps = args.nodes, args.epsilon
     
     k = 2
-    p = sparsify(.8, n)
+    p = sparsify(1, n)
     r = sparsify(.2, n)
 
     A = spectral.generate_symmetric_sbm(n, k, p, r)
