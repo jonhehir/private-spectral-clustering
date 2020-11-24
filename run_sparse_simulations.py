@@ -18,8 +18,8 @@ def run_simulation(args):
     n, eps = args.nodes, args.epsilon
     
     k = 2
-    p = sparsify(1, n)
-    r = sparsify(.2, n)
+    p = sparsify(1.5, n)
+    r = sparsify(.15, n)
 
     A = spectral.generate_symmetric_sbm(n, k, p, r)
     
