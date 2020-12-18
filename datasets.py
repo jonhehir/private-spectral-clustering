@@ -8,7 +8,11 @@ def path_to_file(file):
     return pathlib.Path(__file__).parent.absolute().joinpath(file)
 
 def digit(s):
-    n = int(s)
+    try:
+        n = int(s)
+    except ValueError:
+        n = None
+    
     if str(n) != s:
         return None
     return n
