@@ -28,7 +28,7 @@ def run_dataset(args):
     labels = spectral.recover_labels(A, k)
     end = timeit.default_timer()
     
-    accuracy = spectral.label_accuracy(labels, truth)
+    accuracy = spectral.label_accuracy(labels, true_labels)
     
     return [datetime.datetime.now(), dataset, eps, accuracy, end-start]
 
