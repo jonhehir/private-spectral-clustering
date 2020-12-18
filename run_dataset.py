@@ -17,7 +17,7 @@ def run_dataset(args):
     dataset, eps = args.dataset, args.epsilon
 
     # find and run the function whose name matches `dataset` in the datasets module
-    A, labels = getattr(datasets, dataset)()
+    A, truth = getattr(datasets, dataset)()
     k = max(labels) + 1
     
     start = timeit.default_timer()
