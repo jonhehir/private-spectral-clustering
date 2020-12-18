@@ -5,7 +5,7 @@ from scipy import sparse
 
 
 def path_to_file(file):
-    pathlib.Path(__file__).parent.absolute().joinpath(file)
+    return pathlib.Path(__file__).parent.absolute().joinpath(file)
 
 def digit(s):
     n = int(s)
