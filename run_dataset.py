@@ -1,6 +1,7 @@
 import argparse
 import datetime
 import multiprocessing
+import sys
 import timeit
 
 import numpy as np
@@ -34,6 +35,9 @@ def run_dataset(args):
 def print_result(result):
     print("\t".join([str(x) for x in result]))
 
+def print_error(e):
+    print(e, file=sys.stderr)
+
 
 parser = argparse.ArgumentParser(description="Run private spectral clustering on dataset")
 parser.add_argument("--dataset", type=str, help="Name of dataset (function in datasets module)")
@@ -44,7 +48,7 @@ args = parser.parse_args()
 
 with multiprocessing.Pool() as pool:
     for run in range(args.runs):
-        pool.apply_async(run_dataset, (args,), callback=print_result)
+        pool.apply_async(run_dataset, (args,), callback=print_result, error_callback=print_error)
 
     pool.close()
     pool.join()
