@@ -5,23 +5,19 @@ import timeit
 
 import numpy as np
 
+import datasets
 import spectral
 
 
-def sparsify(p, n):
-    return p * n**(-.3)
-
-def run_simulation(args):
+def run_dataset(args):
     # generate random seed explicitly each time
     np.random.seed()
     
-    n, eps = args.nodes, args.epsilon
-    
-    k = 2
-    p = sparsify(1.5, n)
-    r = sparsify(.15, n)
+    dataset, eps = args.dataset, args.epsilon
 
-    A = spectral.generate_symmetric_sbm(n, k, p, r)
+    # find and run the function whose name matches `dataset` in the datasets module
+    A, labels = getattr(datasets, dataset)()
+    k = max(labels) + 1
     
     start = timeit.default_timer()
     
@@ -31,17 +27,16 @@ def run_simulation(args):
     labels = spectral.recover_labels(A, k)
     end = timeit.default_timer()
     
-    true_lengths = [n // k] * k # eek, this is awful
-    accuracy = spectral.simulation_label_accuracy(labels, true_lengths)
+    accuracy = spectral.label_accuracy(labels, truth)
     
-    return [datetime.datetime.now(), n, k, p, r, eps, accuracy, end-start]
+    return [datetime.datetime.now(), dataset, eps, accuracy, end-start]
 
 def print_result(result):
     print("\t".join([str(x) for x in result]))
 
 
-parser = argparse.ArgumentParser(description="Run simulations for (private) spectral clustering")
-parser.add_argument("--nodes", type=int, help="Number of nodes in each simulated network")
+parser = argparse.ArgumentParser(description="Run private spectral clustering on dataset")
+parser.add_argument("--dataset", type=str, help="Name of dataset (function in datasets module)")
 parser.add_argument("--runs", type=int, help="Number of simulations to run")
 parser.add_argument("--epsilon", type=float, help="Privacy budget (>=0 will use privacy, <0 will use no privacy)")
 

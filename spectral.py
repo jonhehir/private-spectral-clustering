@@ -75,18 +75,30 @@ def recover_labels(A, k):
     kmeans = cluster.KMeans(n_clusters=k)
     return kmeans.fit(A).labels_
 
-def label_accuracy(labels, lengths):
+def simulation_label_accuracy(labels, lengths):
     """
-    max(accuracy) over the set of all label permutations
+    max(accuracy) over the set of all label permutations for a simulation,
+    where nodes are ordered by block (so just knowing the length of each block is sufficient)
     """
     k = len(lengths)
+    
+    truth = []
+    for i in range(k):
+        truth.extend([i] * lengths[i]) # perhaps not perfectly pythonic
+    
+    return label_accuracy(labels, truth)
+
+def label_accuracy(labels, truth):
+    """
+    max(accuracy) over the set of all label permutations
+    truth should be an list of 0-indexed integer labels of length n
+    """
     accuracy = 0
+    k = max(truth) + 1 # number of labels
     
     # This is not optimal, but we're using small k, so it's no biggie.
     for p in itertools.permutations(range(k)):
-        truth = []
-        for i in range(k):
-            truth.extend([p[i]] * lengths[i])
-        accuracy = max(accuracy, metrics.accuracy_score(labels, truth))
+        compare = [p[t] for t in truth]
+        accuracy = max(accuracy, metrics.accuracy_score(labels, compare))
     
     return accuracy

@@ -25,7 +25,7 @@ def run_simulation(args):
     end = timeit.default_timer()
     
     true_lengths = [n // k] * k # eek, this is awful
-    accuracy = spectral.label_accuracy(labels, true_lengths)
+    accuracy = spectral.simulation_label_accuracy(labels, true_lengths)
     
     return [datetime.datetime.now(), n, k, p, r, eps, accuracy, end-start]
 
