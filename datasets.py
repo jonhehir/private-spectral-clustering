@@ -1,6 +1,11 @@
+import pathlib
+
 import numpy
 from scipy import sparse
 
+
+def path_to_file(file):
+    pathlib.Path(__file__).parent.absolute().joinpath(file)
 
 def digit(s):
     n = int(s)
@@ -16,7 +21,7 @@ def read_adj(file, n):
     
     A = sparse.csr_matrix((n, n))
     
-    with open(file) as f:
+    with open(path_to_file(file)) as f:
         for line in f:
             digits = [digit(s) for s in line.strip().split()]
             
@@ -37,7 +42,7 @@ def read_labels(file):
     lookup = {}
     labels = []
     
-    with open(file) as f:
+    with open(path_to_file(file)) as f:
         for line in f:
             line = line.strip()
             
