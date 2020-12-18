@@ -30,10 +30,10 @@ def read_adj(file, n):
             digits = [digit(s) for s in line.strip().split()]
             
             # only use valid lines
-            if any([d is None for d in digits]) or len(d) != 2:
+            if any([d is None for d in digits]) or len(digits) != 2:
                 continue
                 
-            A[d[0], d[1]] = 1
+            A[digits[0], digits[1]] = 1
     
     return A
 
