@@ -40,7 +40,7 @@ def read_adj(file, n):
 def read_labels(file):
     """
     Read a file with one string label per line and
-    return a list of label IDs (1-indexed)
+    return a list of label IDs (0-indexed)
     """
     
     lookup = {}
@@ -56,7 +56,7 @@ def read_labels(file):
                 
             # assign an ID to this label if it doesn't exist
             if line not in lookup:
-                lookup[line] = len(lookup) + 1
+                lookup[line] = len(lookup)
             
             # lookup label; append it
             labels.append(lookup[line])
