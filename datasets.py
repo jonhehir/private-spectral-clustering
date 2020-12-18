@@ -33,7 +33,7 @@ def read_adj(file, n):
             if any([d is None for d in digits]) or len(digits) != 2:
                 continue
                 
-            A[digits[0], digits[1]] = 1
+            A[digits[0] - 1, digits[1] - 1] = 1
     
     return A
 
