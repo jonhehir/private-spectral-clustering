@@ -23,7 +23,7 @@ def read_adj(file, n):
     Ignore lines that aren't of the right format (e.g., comments or headers)
     """
     
-    A = sparse.csr_matrix((n, n))
+    A = sparse.lil_matrix((n, n))
     
     with open(path_to_file(file)) as f:
         for line in f:
