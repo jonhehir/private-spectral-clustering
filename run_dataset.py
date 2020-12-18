@@ -44,7 +44,7 @@ args = parser.parse_args()
 
 with multiprocessing.Pool() as pool:
     for run in range(args.runs):
-        pool.apply_async(run_simulation, (args,), callback=print_result)
+        pool.apply_async(run_dataset, (args,), callback=print_result)
 
     pool.close()
     pool.join()
