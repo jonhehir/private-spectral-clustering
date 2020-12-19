@@ -75,5 +75,5 @@ def political_blogs():
 
 def hansell():
     labels = read_labels("datasets/hansell/nodes.txt")
-    A = symmetrize(read_adj("datasets/hansell/edges.txt"))
+    A = symmetrize(read_adj("datasets/hansell/edges.txt", 27))
     return A, labels
