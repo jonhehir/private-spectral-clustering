@@ -37,6 +37,11 @@ def read_adj(file, n):
     
     return A
 
+def symmetrize(A):
+    r, c = A.nonzero()
+    A[c, r] = 1
+    return A
+
 def read_labels(file):
     """
     Read a file with one string label per line and
@@ -68,3 +73,7 @@ def political_blogs():
     A = read_adj("datasets/political_blogs/blogs.txt", len(labels))
     return A, labels
 
+def hansell():
+    labels = read_labels("datasets/hansell/nodes.txt")
+    A = symmetrize(read_adj("datasets/hansell/edges.txt"))
+    return A, labels
