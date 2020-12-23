@@ -77,3 +77,9 @@ def hansell():
     labels = read_labels("datasets/hansell/nodes.txt")
     A = symmetrize(read_adj("datasets/hansell/edges.txt", 27))
     return A, labels
+
+def house(congress):
+    congress = int(congress)
+    labels = read_labels(f"datasets/house/nodes-{congress:03}.tsv")
+    A = symmetrize(read_adj(f"datasets/house/edges-{congress:03}.tsv", len(labels)))
+    return A, labels

@@ -15,9 +15,13 @@ def run_dataset(args):
     np.random.seed()
     
     dataset, eps = args.dataset, args.epsilon
+    
+    # allow arguments to pass to dataset function
+    fn_parts = dataset.split(":")
+    fn = fn_parts.pop(0)
 
     # find and run the function whose name matches `dataset` in the datasets module
-    A, true_labels = getattr(datasets, dataset)()
+    A, true_labels = getattr(datasets, fn)(*fn_parts)
     k = max(true_labels) + 1
     
     start = timeit.default_timer()
