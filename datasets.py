@@ -83,3 +83,9 @@ def house(congress):
     labels = read_labels(f"datasets/house/nodes-{congress:03}.tsv")
     A = symmetrize(read_adj(f"datasets/house/edges-{congress:03}.tsv", len(labels)))
     return A, labels
+
+def senate(congress):
+    congress = int(congress)
+    labels = read_labels(f"datasets/senate/nodes-{congress:03}.tsv")
+    A = symmetrize(read_adj(f"datasets/senate/edges-{congress:03}.tsv", len(labels)))
+    return A, labels
