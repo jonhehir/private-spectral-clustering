@@ -17,11 +17,15 @@ def digit(s):
         return None
     return n
 
-def read_adj(file, n):
+def read_adj(file, n, first_node_index=1):
     """
     Read a whitespace delimited adjacency matrix
     Ignore lines that aren't of the right format (e.g., comments or headers)
+    By default, assumes first node index is 1. To use 0-index,
+    set `first_node_index` accordingly.
     """
+    
+    offset = 1 - first_node_index
     
     A = sparse.lil_matrix((n, n))
     
@@ -33,7 +37,7 @@ def read_adj(file, n):
             if any([d is None for d in digits]) or len(digits) != 2:
                 continue
                 
-            A[digits[0] - 1, digits[1] - 1] = 1
+            A[digits[0] - offset, digits[1] - offset] = 1
     
     return A
 
@@ -69,7 +73,11 @@ def read_labels(file):
     return labels
     
 # The datasets:
-# (Okay, yes, this code has become very repetitive.)
+
+def email_eu_core():
+    labels = read_labels("datasets/email_eu_core/nodes.txt")
+    A = symmetrize(read_adj("datasets/email_eu_core/edges.txt", len(labels), first_node_index=0))
+    return A, labels
 
 def hansell():
     labels = read_labels("datasets/hansell/nodes.txt")
