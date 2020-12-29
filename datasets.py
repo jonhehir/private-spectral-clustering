@@ -67,11 +67,9 @@ def read_labels(file):
             labels.append(lookup[line])
     
     return labels
-
-def political_blogs():
-    labels = read_labels("datasets/political_blogs/blogs-orientation.txt")
-    A = read_adj("datasets/political_blogs/blogs.txt", len(labels))
-    return A, labels
+    
+# The datasets:
+# (Okay, yes, this code has become very repetitive.)
 
 def hansell():
     labels = read_labels("datasets/hansell/nodes.txt")
@@ -82,6 +80,16 @@ def house(congress):
     congress = int(congress)
     labels = read_labels(f"datasets/house/nodes-{congress:03}.tsv")
     A = symmetrize(read_adj(f"datasets/house/edges-{congress:03}.tsv", len(labels)))
+    return A, labels
+
+def political_blogs():
+    labels = read_labels("datasets/political_blogs/blogs-orientation.txt")
+    A = read_adj("datasets/political_blogs/blogs.txt", len(labels))
+    return A, labels
+
+def sampson():
+    labels = read_labels("datasets/sampson/nodes.txt")
+    A = read_adj("datasets/sampson/edges.txt", len(labels))
     return A, labels
 
 def senate(congress):
