@@ -80,8 +80,8 @@ def email_eu_core():
     return A, labels
 
 def fb100(school):
-    labels = read_labels(f"datasets/house/{school}-nodes.tsv")
-    A = symmetrize(read_adj(f"datasets/house/{school}-edges.tsv", len(labels)))
+    labels = read_labels(f"datasets/fb100/{school}-nodes.txt")
+    A = symmetrize(read_adj(f"datasets/fb100/{school}-edges.txt", len(labels)))
     return A, labels
 
 def hansell():
