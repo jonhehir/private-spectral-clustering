@@ -25,8 +25,6 @@ def read_adj(file, n, first_node_index=1):
     set `first_node_index` accordingly.
     """
     
-    offset = 1 - first_node_index
-    
     A = sparse.lil_matrix((n, n))
     
     with open(path_to_file(file)) as f:
@@ -37,7 +35,7 @@ def read_adj(file, n, first_node_index=1):
             if any([d is None for d in digits]) or len(digits) != 2:
                 continue
                 
-            A[digits[0] - offset, digits[1] - offset] = 1
+            A[digits[0] - first_node_index, digits[1] - first_node_index] = 1
     
     return A
 
