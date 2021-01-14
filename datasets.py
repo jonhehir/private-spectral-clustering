@@ -79,6 +79,11 @@ def email_eu_core():
     A = symmetrize(read_adj("datasets/email_eu_core/edges.txt", len(labels), first_node_index=0))
     return A, labels
 
+def fb100(school):
+    labels = read_labels(f"datasets/house/{school}-nodes.tsv")
+    A = symmetrize(read_adj(f"datasets/house/{school}-edges.tsv", len(labels)))
+    return A, labels
+
 def hansell():
     labels = read_labels("datasets/hansell/nodes.txt")
     A = symmetrize(read_adj("datasets/hansell/edges.txt", 27))
