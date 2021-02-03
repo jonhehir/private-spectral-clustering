@@ -71,12 +71,6 @@ def read_labels(file):
     return labels
     
 # The datasets:
-
-def email_eu_core():
-    labels = read_labels("datasets/email_eu_core/nodes.txt")
-    A = symmetrize(read_adj("datasets/email_eu_core/edges.txt", len(labels), first_node_index=0))
-    return A, labels
-
 def fb100(school):
     labels = read_labels(f"datasets/fb100/{school}-nodes.txt")
     A = symmetrize(read_adj(f"datasets/fb100/{school}-edges.txt", len(labels)))

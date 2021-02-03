@@ -10,7 +10,7 @@ def generate_block(size, prob, symmetric=False):
     Generates a random block of binary entries where each entry is 1 w.p. prob
     If symmetric=True, returns a symmetric block with a zero on the diagonal.
     """
-    density = stats.binom.rvs(size[0] * size[1], prob, size=1) / (size[0] * size[1])
+    density = stats.binom.rvs(size[0] * size[1], prob, size=1).item() / (size[0] * size[1])
     m = sparse.random(size[0], size[1], density)
     m.data[:] = 1
     

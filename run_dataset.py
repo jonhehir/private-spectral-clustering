@@ -39,9 +39,6 @@ def run_dataset(args):
 def print_result(result):
     print("\t".join([str(x) for x in result]))
 
-def print_error(e):
-    print(e, file=sys.stderr)
-
 
 parser = argparse.ArgumentParser(description="Run private spectral clustering on dataset")
 parser.add_argument("--dataset", type=str, help="Name of dataset (function in datasets module)")
@@ -51,8 +48,10 @@ parser.add_argument("--epsilon", type=float, help="Privacy budget (>=0 will use 
 args = parser.parse_args()
 
 with multiprocessing.Pool() as pool:
-    for run in range(args.runs):
-        pool.apply_async(run_dataset, (args,), callback=print_result, error_callback=print_error)
+    jobs = [pool.apply_async(run_dataset, (args,), callback=print_result)
+            for _ in range(args.runs)]
+    for job in jobs:
+        job.get() # for the sake of re-raising any exceptions in the child process
 
     pool.close()
     pool.join()

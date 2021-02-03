@@ -48,8 +48,10 @@ parser.add_argument("--epsilon", type=float, help="Privacy budget (>=0 will use 
 args = parser.parse_args()
 
 with multiprocessing.Pool() as pool:
-    for run in range(args.runs):
-        pool.apply_async(run_simulation, (args,), callback=print_result)
+    jobs = [pool.apply_async(run_simulation, (args,), callback=print_result)
+            for _ in range(args.runs)]
+    for job in jobs:
+        job.get() # for the sake of re-raising any exceptions in the child process
 
     pool.close()
     pool.join()
