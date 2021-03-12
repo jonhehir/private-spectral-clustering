@@ -82,6 +82,11 @@ def house(congress):
     A = symmetrize(read_adj(f"datasets/house/edges-{congress:03}.tsv", len(labels)))
     return A, labels
 
+def political_blogs():
+    labels = read_labels("datasets/political_blogs/blogs-orientation.txt")
+    A = read_adj("datasets/political_blogs/blogs.txt", len(labels))
+    return A, labels
+
 def sampson():
     labels = read_labels("datasets/sampson/nodes.txt")
     A = read_adj("datasets/sampson/edges.txt", len(labels))
