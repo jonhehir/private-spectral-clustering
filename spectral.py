@@ -1,6 +1,7 @@
 import itertools
 from math import exp
 
+import numpy as np
 from scipy import sparse, stats
 from sklearn import cluster, metrics
 
@@ -67,13 +68,39 @@ def perturb_symmetric(m, eps):
     error = generate_block(m.get_shape(), p, symmetric = True)
     return abs(m - error)
 
-def recover_labels(A, k):
+def cluster_kmeans(U, k):
+    """
+    Cluster U by simple k-means
+    Return labels
+    """
+    kmeans = cluster.KMeans(n_clusters=k)
+    return kmeans.fit(U).labels_
+
+def cluster_normalized_kmeans(U, k):
+    """
+    Cluster U by k-means over row-normalized version of U
+    Return labels
+    """
+    row_norms = np.linalg.norm(U, axis=1)
+    U_norm = np.zeros_like(U)
+    U_norm = U.divide(row_norms, out=U_norm, where=(row_norms != 0))
+
+    return cluster_kmeans(U_norm)
+
+def cluster_normalized_kmedians(U, k):
+    """
+    Cluster U by k-medians over row-normalized version of U
+    Return labels
+    """
+    # TODO
+    pass
+
+def recover_labels(A, k, strategy=cluster_kmeans):
     """
     Employ spectral clustering to recover labels for A
     """
-    eigs = sparse.linalg.eigsh(A, k)[1]
-    kmeans = cluster.KMeans(n_clusters=k)
-    return kmeans.fit(A).labels_
+    U = sparse.linalg.eigsh(A, k)[1]
+    return strategy(U, k)
 
 def simulation_label_accuracy(labels, lengths):
     """
