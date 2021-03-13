@@ -1,6 +1,8 @@
 import itertools
 from math import exp
 
+import numpy as np
+from pyclustering.cluster.kmedians import kmedians
 from scipy import sparse, stats
 from sklearn import cluster, metrics
 
@@ -41,6 +43,12 @@ def generate_sbm(block_sizes, block_probs):
     return sparse.bmat(blocks)
 
 def generate_symmetric_sbm(n, k, p, r):
+    """
+    A special case of SBM where:
+    - blocks are equally sized (n/k nodes each)
+    - within-block edge probability = p + r
+    - across-block edge probability = r
+    """
     if n % k > 0:
         raise RuntimeError("n must be divisble by k to have equal-sized blocks")
     
@@ -67,13 +75,76 @@ def perturb_symmetric(m, eps):
     error = generate_block(m.get_shape(), p, symmetric = True)
     return abs(m - error)
 
-def recover_labels(A, k):
+def normalize_rows(U):
+    """
+    Normalize rows of U to have unit norm
+    If a given row has norm == 0, it is left alone
+    """
+    n = U.shape[0]
+    row_norms = np.linalg.norm(U, axis=1).reshape((n, 1))
+    
+    # safely divide by norms, leaving original entries if row norm == 0
+    return np.divide(U, row_norms, out=U, where=(row_norms > 0))
+
+def cluster_kmeans(U, k):
+    """
+    Cluster U by simple k-means
+    Return labels
+    """
+    kmeans = cluster.KMeans(n_clusters=k)
+    return kmeans.fit(U).labels_
+
+def cluster_normalized_kmeans(U, k):
+    """
+    Cluster U by k-means over row-normalized version of U
+    Return labels
+    """
+    return cluster_kmeans(normalize_rows(U), k)
+
+def cluster_normalized_kmedians(U, k):
+    """
+    Cluster U by k-medians over row-normalized version of U
+    Return labels
+    """
+    n = U.shape[0]
+    U_norm = normalize_rows(U)
+    best_labels = None
+    best_error = float("inf")
+
+    # TODO: Maybe don't hardcode?
+    for i in range(10):
+        # for initial centers, choose k points at random
+        indices = np.random.choice(n, k, replace=False)
+        initial_centers = U_norm[indices, :]
+        
+        # run k-medians
+        instance = kmedians(U_norm.tolist(), initial_centers.tolist())
+        instance.process()
+        
+        # get cluster labels (in the format we want them)
+        labels = [None] * n
+        i = 0
+        for c in instance.get_clusters():
+            for j in c:
+                labels[j] = i
+            i += 1
+        
+        # calculate error
+        medians = np.array(instance.get_medians())
+        error = np.sum(np.linalg.norm(U_norm - medians[labels, :], axis=1))
+
+        if error < best_error:
+            best_labels = labels
+            best_error = error
+
+    return best_labels
+
+def recover_labels(A, k, strategy=cluster_kmeans):
     """
     Employ spectral clustering to recover labels for A
     """
-    eigs = sparse.linalg.eigsh(A, k)[1]
-    kmeans = cluster.KMeans(n_clusters=k)
-    return kmeans.fit(A).labels_
+    U = sparse.linalg.eigsh(A, k)[1]
+    return strategy(U, k)
 
 def simulation_label_accuracy(labels, lengths):
     """
