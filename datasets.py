@@ -1,6 +1,6 @@
 import pathlib
 
-import numpy
+import numpy as np
 from scipy import sparse
 
 
@@ -70,6 +70,22 @@ def read_labels(file):
     
     return labels
     
+def exclude_nodes(A, labels, indices):
+    """
+    In the unlikely scenario that you want to completely remove
+    some nodes from the network, use this handy function!
+    """
+    
+    # This is a pretty inefficient implementation.
+    # This is really only intended to be used on fairly small matrices.
+    A = np.delete(A.todense(), indices, axis=0)
+    A = np.delete(A, indices, axis=1)
+    labels = labels.copy()
+    for i in indices:
+        del labels[i]
+    
+    return sparse.lil_matrix(A), labels
+
 # The datasets:
 def hansell():
     labels = read_labels("datasets/hansell/nodes.txt")
@@ -84,8 +100,8 @@ def house(congress):
 
 def political_blogs():
     labels = read_labels("datasets/political_blogs/blogs-orientation.txt")
-    A = read_adj("datasets/political_blogs/blogs.txt", len(labels))
-    return A, labels
+    A = symmetrize(read_adj("datasets/political_blogs/blogs.txt", len(labels)))
+    return exclude_nodes(A, labels, [425, 426])
 
 def sampson():
     labels = read_labels("datasets/sampson/nodes.txt")
