@@ -6,64 +6,13 @@ from pyclustering.cluster.kmedians import kmedians
 from scipy import sparse, stats
 from sklearn import cluster, metrics
 
+import generation
+
 
 # Hardcoded number of random initializations to try for k-medians
 N_KMEDIANS_INITIALIZATIONS = 10
 
 
-def generate_block(size, prob, symmetric=False):
-    """
-    Generates a random block of binary entries where each entry is 1 w.p. prob
-    If symmetric=True, returns a symmetric block with a zero on the diagonal.
-    """
-    density = stats.binom.rvs(size[0] * size[1], prob, size=1).item() / (size[0] * size[1])
-    m = sparse.random(size[0], size[1], density)
-    m.data[:] = 1
-    
-    if symmetric:
-        if size[0] != size[1]:
-            raise RuntimeError("symmetric matrix must be square")
-        m = sparse.triu(m, k=1) + sparse.triu(m, k=1).transpose()
-    
-    return m
-
-def generate_sbm(block_sizes, block_probs):
-    """
-    Generate a stochastic block model using fixed block sizes and connectivity matrix
-    """
-    k = len(block_sizes)
-    blocks = [[None for i in range(k)] for j in range(k)]
-    
-    for i in range(k):
-        for j in range(i, k):
-            blocks[i][j] = generate_block(
-                (block_sizes[i], block_sizes[j]),
-                block_probs[i][j],
-                symmetric=(i == j)
-            )
-            if i < j:
-                blocks[j][i] = blocks[i][j].transpose()
-    
-    return sparse.bmat(blocks)
-
-def generate_symmetric_sbm(n, k, p, r):
-    """
-    A special case of SBM where:
-    - blocks are equally sized (n/k nodes each)
-    - within-block edge probability = p + r
-    - across-block edge probability = r
-    """
-    if n % k > 0:
-        raise RuntimeError("n must be divisble by k to have equal-sized blocks")
-    
-    block_probs = [
-        [ p + r if i == j else r for i in range(k) ]
-        for j in range(k)
-    ]
-    block_sizes = [ n // k ] * k
-    
-    return generate_sbm(block_sizes, block_probs)
-    
 def perturb_prob(eps):
     """
     P(perturb edge)
@@ -76,7 +25,7 @@ def perturb_symmetric(m, eps):
     Note: This retains a zero on the diagonal.
     """
     p = perturb_prob(eps)
-    error = generate_block(m.get_shape(), p, symmetric = True)
+    error = generation.generate_block(m.shape, p, symmetric = True)
     return abs(m - error)
 
 def normalize_rows(U):

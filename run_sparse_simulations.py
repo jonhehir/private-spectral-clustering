@@ -5,7 +5,7 @@ import timeit
 
 import numpy as np
 
-import spectral
+import generation, spectral
 
 
 def sparsify(p, n):
@@ -21,7 +21,7 @@ def run_simulation(args):
     p = sparsify(1.5, n)
     r = sparsify(.15, n)
 
-    A = spectral.generate_symmetric_sbm(n, k, p, r)
+    A = generation.generate_symmetric_sbm(n, k, p, r)
     
     start = timeit.default_timer()
     
