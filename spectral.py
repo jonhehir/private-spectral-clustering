@@ -7,6 +7,10 @@ from scipy import sparse, stats
 from sklearn import cluster, metrics
 
 
+# Hardcoded number of random initializations to try for k-medians
+N_KMEDIANS_INITIALIZATIONS = 10
+
+
 def generate_block(size, prob, symmetric=False):
     """
     Generates a random block of binary entries where each entry is 1 w.p. prob
@@ -86,6 +90,24 @@ def normalize_rows(U):
     # safely divide by norms, leaving original entries if row norm == 0
     return np.divide(U, row_norms, out=U, where=(row_norms > 0))
 
+def preprocess_to_laplacian(A, eps, reg=False):
+    """
+    Returns a Laplacian (L = D^-0.5 A D^-0.5) given a symmetric adjacency matrix A
+    """
+    degrees = np.squeeze(np.asarray(A.sum(axis=1)))
+    if reg:
+        degrees += np.mean(degrees)
+    D = sparse.diags(degrees ** -0.5)
+    return D @ A @ D
+
+def preprocess_recenter(M, eps):
+    """
+    Subtracts 1/(e^eps + 1) from off-diagonals of M
+    """
+    M = M.todense()
+    p = perturb_prob(eps)
+    return M - p + np.diag([p] * M.shape[0])
+
 def cluster_kmeans(U, k):
     """
     Cluster U by simple k-means
@@ -111,8 +133,8 @@ def cluster_normalized_kmedians(U, k):
     best_labels = None
     best_error = float("inf")
 
-    # TODO: Maybe don't hardcode?
-    for i in range(10):
+    # Run k-medians multiple times with random initializations, then return best result
+    for i in range(N_KMEDIANS_INITIALIZATIONS):
         # for initial centers, choose k points at random
         indices = np.random.choice(n, k, replace=False)
         initial_centers = U_norm[indices, :]
