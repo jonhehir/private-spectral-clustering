@@ -6,8 +6,7 @@ import timeit
 
 import numpy as np
 
-import datasets
-import spectral
+import datasets, spectral
 
 
 def run_dataset(args):
