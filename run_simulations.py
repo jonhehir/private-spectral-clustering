@@ -12,7 +12,7 @@ import generation, spectral
 def sparsify(p, n, sparsity):
     return p * n**(-sparsity)
 
-def run_simulation(n, k, p, r, a, eps, sparsity):
+def run_simulation(name, n, k, p, r, a, eps, sparsity):
     # generate random seed explicitly each time
     np.random.seed()
     
@@ -38,13 +38,14 @@ def run_simulation(n, k, p, r, a, eps, sparsity):
     true_lengths = [n // k] * k # eek, this is awful
     accuracy = spectral.simulation_label_accuracy(labels, true_lengths)
     
-    return [datetime.datetime.now(), n, k, p, r, a, eps, accuracy, end-start]
+    return [name, datetime.datetime.now(), n, k, p, r, a, eps, accuracy, end-start]
 
 def print_result(result):
     print("\t".join([str(x) for x in result]))
 
 
 parser = argparse.ArgumentParser(description="Run simulations for (private) spectral clustering")
+parser.add_argument("--name", type=str, help="Name of simulation setting")
 parser.add_argument("--runs", type=int, help="Number of simulations to run", default=1)
 parser.add_argument("--n", type=int, nargs="+", help="Number of nodes in each simulated network")
 parser.add_argument("--k", type=int, help="Number of blocks in each simulated network")
@@ -56,15 +57,11 @@ parser.add_argument("--epsilon", nargs="+", type=float, help="Privacy budget (>=
 
 args = parser.parse_args()
 
-# for eps in args.epsilon:
-#     for n in args.n:
-        # print_result(run_simulation(n, args.k, args.p, args.r, args.a, eps, args.sparsity))
-
 with multiprocessing.Pool() as pool:
     jobs = []
     
     for (n, eps, _) in itertools.product(args.n, args.epsilon, range(args.runs)):
-        a = (n, args.k, args.p, args.r, args.a, eps, args.sparsity)
+        a = (args.name, n, args.k, args.p, args.r, args.a, eps, args.sparsity)
         jobs.append(pool.apply_async(run_simulation, a, callback=print_result))
 
     for job in jobs:
