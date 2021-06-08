@@ -53,7 +53,6 @@ def preprocess_recenter(M, eps):
     """
     Subtracts 1/(e^eps + 1) from off-diagonals of M
     """
-    M = M.todense()
     p = perturb_prob(eps)
     return M - p + np.diag([p] * M.shape[0])
 
