@@ -45,7 +45,7 @@ def print_result(result):
 
 
 parser = argparse.ArgumentParser(description="Run simulations for (private) spectral clustering")
-parser.add_argument("--name", type=str, help="Name of simulation setting")
+parser.add_argument("--name", type=str, help="Name of simulation setting", default="simulation")
 parser.add_argument("--runs", type=int, help="Number of simulations to run", default=1)
 parser.add_argument("--n", type=int, nargs="+", help="Number of nodes in each simulated network")
 parser.add_argument("--k", type=int, help="Number of blocks in each simulated network")
