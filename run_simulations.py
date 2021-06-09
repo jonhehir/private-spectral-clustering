@@ -38,7 +38,7 @@ def run_simulation(name, n, k, p, r, a, eps, sparsity):
     true_lengths = [n // k] * k # eek, this is awful
     accuracy = spectral.simulation_label_accuracy(labels, true_lengths)
     
-    return [name, datetime.datetime.now(), n, k, p, r, a, eps, accuracy, end-start]
+    return [name, datetime.datetime.now(), n, k, p, r, a, sparsity, eps, accuracy, end-start]
 
 def print_result(result):
     print("\t".join([str(x) for x in result]))
