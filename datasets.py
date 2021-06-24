@@ -87,6 +87,11 @@ def exclude_nodes(A, labels, indices):
     return sparse.lil_matrix(A), labels
 
 # The datasets:
+def fb100(school):
+    labels = read_labels(f"datasets/fb100/{school}-nodes.txt")
+    A = symmetrize(read_adj(f"datasets/fb100/{school}-edges.txt", len(labels)))
+    return A, labels
+
 def hansell():
     labels = read_labels("datasets/hansell/nodes.txt")
     A = symmetrize(read_adj("datasets/hansell/edges.txt", 27))
