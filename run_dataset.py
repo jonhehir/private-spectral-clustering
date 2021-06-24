@@ -26,9 +26,9 @@ def run_dataset(args):
     start = timeit.default_timer()
     
     if eps >= 0:
-        A = spectral.perturb_symmetric(A, eps)
+        A = spectral.preprocess_recenter(spectral.perturb_symmetric(A, eps), eps)
     
-    labels = spectral.recover_labels(A, k)
+    labels = spectral.recover_labels(A, k, strategy=spectral.cluster_normalized_kmedians)
     end = timeit.default_timer()
     
     accuracy = spectral.label_accuracy(labels, true_labels)
