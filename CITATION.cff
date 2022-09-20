@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+title: "private-spectral-clustering: Spectral Clustering with Edge-Flip Differential Privacy"
+message: >-
+  If you use this software, please cite it using this
+  metadata.
+type: software
+authors:
+  - given-names: Jonathan
+    family-names: Hehir
+identifiers:
+  - type: doi
+    value: 10.29012/jpc.811
+    description: Our research paper for the algorithms used
+repository-code: >-
+  https://github.com/jonhehir/private-spectral-clustering
